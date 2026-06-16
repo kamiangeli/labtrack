@@ -1,13 +1,52 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+model Usuario {
+  id_usuario     Int      @id @default(autoincrement())
+  nome           String
+  email          String   @unique
+  senha          String
+  nivel_acesso   String
+  data_cadastro  DateTime @default(now())
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
-generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  movimentacoes  Movimentacao[]
 }
 
-datasource db {
-  provider = "postgresql"
+model Insumo {
+  id_insumo         Int      @id @default(autoincrement())
+  nome              String
+  descricao         String?
+  fabricante        String
+  capacidade_total  Int
+  quantidade_atual  Int
+  unidade_medida    String
+  status            String
+
+  lotes             Lote[]
+}
+
+model Lote {
+  id_lote         Int      @id @default(autoincrement())
+  numero_lote     String
+  fabricante      String
+  data_fabricacao DateTime
+  data_validade   DateTime
+  quantidade      Int
+  qr_code         String?
+
+  insumoId        Int
+  insumo          Insumo   @relation(fields: [insumoId], references: [id_insumo])
+
+  movimentacoes   Movimentacao[]
+}
+
+model Movimentacao {
+  id_movimentacao  Int      @id @default(autoincrement())
+  tipo             String
+  quantidade       Int
+  data_hora        DateTime @default(now())
+  motivo_descarte  String?
+
+  usuarioId        Int
+  loteId           Int
+
+  usuario          Usuario @relation(fields: [usuarioId], references: [id_usuario])
+  lote             Lote    @relation(fields: [loteId], references: [id_lote])
 }
