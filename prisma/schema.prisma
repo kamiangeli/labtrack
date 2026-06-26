@@ -1,52 +1,36 @@
-model Usuario {
-  id_usuario     Int      @id @default(autoincrement())
-  nome           String
-  email          String   @unique
-  senha          String
-  nivel_acesso   String
-  data_cadastro  DateTime @default(now())
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
-  movimentacoes  Movimentacao[]
+generator client {
+  provider = "prisma-client-js"
 }
 
 model Insumo {
-  id_insumo         Int      @id @default(autoincrement())
-  nome              String
-  descricao         String?
-  fabricante        String
-  capacidade_total  Int
-  quantidade_atual  Int
-  unidade_medida    String
-  status            String
-
-  lotes             Lote[]
+  id               Int      @id @default(autoincrement()) //Mudou aqui!
+  nome             String
+  descricao        String?
+  fabricante       String
+  capacidade_total Float
+  quantidade_atual Float
+  unidade          String
+  status           String   @default("DISPONIVEL")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  lotes            Lote[]
 }
 
 model Lote {
-  id_lote         Int      @id @default(autoincrement())
-  numero_lote     String
-  fabricante      String
-  data_fabricacao DateTime
-  data_validade   DateTime
-  quantidade      Int
-  qr_code         String?
+  id                 Int      @id @default(autoincrement()) //Mudou aqui!
+  numero_lote        String
+  fabricante         String
+  quantidade_inicial Float
+  quantidade_atual   Float
+  data_validade      DateTime
+  createdAt          DateTime @default(now())
+  insumoId           Int      //Mudou aqui para número!
+  insumo             Insumo   @relation(fields: [insumoId], references: [id])
 
-  insumoId        Int
-  insumo          Insumo   @relation(fields: [insumoId], references: [id_insumo])
-
-  movimentacoes   Movimentacao[]
-}
-
-model Movimentacao {
-  id_movimentacao  Int      @id @default(autoincrement())
-  tipo             String
-  quantidade       Int
-  data_hora        DateTime @default(now())
-  motivo_descarte  String?
-
-  usuarioId        Int
-  loteId           Int
-
-  usuario          Usuario @relation(fields: [usuarioId], references: [id_usuario])
-  lote             Lote    @relation(fields: [loteId], references: [id_lote])
+  @@unique([numero_lote, fabricante], name: "numero_lote_fabricante")
 }

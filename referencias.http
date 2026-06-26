@@ -1,0 +1,39 @@
+
+POST http://localhost:3000/insumos
+Content-Type: application/json
+
+{
+  "nome": "Álcool Isopropílico",
+  "descricao": "Limpeza de componentes eletrônicos",
+  "fabricante": "Química Central",
+  "capacidade_total": 1000,
+  "quantidade_atual": 1000,
+  "unidade": "ml",
+  "status": "DISPONIVEL"
+}
+
+###
+POST http://localhost:3000/lotes
+Content-Type: application/json
+
+{
+  "numero_lote": "LOTE123",
+  "fabricante": "Química Central",
+  "quantidade_inicial": 500,
+  "quantidade_atual": 500,
+  "data_validade": "2027-12-31T00:00:00.000Z",
+  "insumoId": "2"
+}
+
+### 3. Tentar cadastrar o MESMO Lote e Fabricante (Deve bloquear pela RN004)
+POST http://localhost:3000/lotes
+Content-Type: application/json
+
+{
+  "numero_lote": "LOTE123",
+  "fabricante": "Química Central",
+  "quantidade_inicial": 200,
+  "quantidade_atual": 200,
+  "data_validade": "2027-12-31T00:00:00.000Z",
+  "insumoId": "COLOQUE_O_ID_DO_INSUMO_AQUI"
+}
